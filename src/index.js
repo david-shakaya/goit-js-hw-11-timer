@@ -1,49 +1,34 @@
+import "../src/styles.css"
 
-
-
-const colors = [
-  '#FFFFFF',
-  '#2196F3',
-  '#4CAF50',
-  '#FF9800',
-  '#009688',
-  '#795548',
-];
-const refs ={
-  startBtn: document.querySelector('[data-action="start"]'),
-  stopBtn: document.querySelector('[data-action="stop"]'),
-  bodyStyle:document.querySelector('body')
-}
-// const randomIntegerFromInterval = (min, max) => {
-//   return Math.floor(Math.random() * (max - min + 1) + min);
-// };
-// const randomColor =colors[randomIntegerFromInterval(0, 6)]
-
-const randomColor = () => colors[Math.floor(Math.random() * colors.length)] //Генерит случ цвет
-
-
-
-refs.startBtn.addEventListener('click', changeColor)
-refs.stopBtn.addEventListener('click', stopChangeColor)
-
-let intervalId = null;
-
-function changeColor() {
-  if (intervalId) {   // Проверка. Если старт нажали повторно нажить нельзя
-    return
-  }
-
-  refs.startBtn.setAttribute("disabled", "true"); 
-  intervalId = setInterval(function () {         // добавл интервал
-  refs.bodyStyle.style.backgroundColor = randomColor();   //вызываем функц. и меням цвет 
-  }, 1000);
+const refs = {
+  spanDays: document.querySelector('[data-value="days"]'),
+  spanHours: document.querySelector('[data-value="hours"]'),
+  spanMins: document.querySelector('[data-value="mins"]'),
+  spanSecs:document.querySelector('[data-value="secs"]'),
 }
 
+const days =(time)=> pad(Math.floor(time / (1000 * 60 * 60 * 24)));
+const hours =(time)=> pad(Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+const mins =(time)=> pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
+const secs = (time) => pad(Math.floor((time % (1000 * 60)) / 1000));
 
-function stopChangeColor() {
-  if (intervalId) {           // Проверка. Если СТОП нажали повторно нажить нельзя
-    refs.startBtn.removeAttribute("disabled")  //Удал все
-    clearInterval(intervalId)
-    intervalId = null   
-  }
+let timeResult;
+
+const intervalId = setInterval(() => {
+  const curentTime = new Date()
+  const targetDate = new Date('Jan 1, 2021')
+  timeResult = targetDate - curentTime
+  
+  refs.spanSecs.textContent = secs(timeResult)
+  refs.spanMins.textContent = mins(timeResult)
+  refs.spanHours.textContent = hours(timeResult)
+  refs.spanDays.textContent = days(timeResult)
+  
+}, 1000);
+
+ /* padStart()
+  * Принимает число, приводит к строке и добавляет в начало 0 если число меньше 2-х знаков
+   */
+function pad(value) {
+    return String(value).padStart('2',0)
 }
